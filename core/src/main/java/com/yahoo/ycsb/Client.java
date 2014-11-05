@@ -18,6 +18,7 @@
 package com.yahoo.ycsb;
 
 
+import com.opengamma.analytics.math.statistics.distribution.GeneralizedParetoDistribution;
 import com.yahoo.ycsb.measurements.Measurements;
 import com.yahoo.ycsb.measurements.exporter.MeasurementsExporter;
 import com.yahoo.ycsb.measurements.exporter.TextMeasurementsExporter;
@@ -262,9 +263,17 @@ class ClientThread extends Thread
 		
 		try
 		{
+
 			if (_dotransactions)
 			{
-				long st=System.currentTimeMillis();
+                long st=System.currentTimeMillis();
+                long durationst = System.currentTimeMillis();
+                long intervalst = System.nanoTime();
+                int durationdone = 0;
+                double sigma = _sigma[durationdone];
+                double kappa = _kappa[durationdone];
+                final ParetoRandomEngine engine = new ParetoRandomEngine();
+                GeneralizedParetoDistribution g = new GeneralizedParetoDistribution((double)0,sigma,kappa,engine);
 
 				while (((_opcount == 0) || (_opsdone < _opcount)) && !_workload.isStopRequested())
 				{
