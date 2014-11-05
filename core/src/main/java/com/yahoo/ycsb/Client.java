@@ -447,6 +447,9 @@ public class Client
 		int target=0;
 		boolean status=false;
 		String label="";
+        int paretoduration = 0;
+        double[] sigma = null;
+        double[] kappa = null;
 
 		//parse arguments
 		int argindex=0;
@@ -546,7 +549,34 @@ public class Client
 				for (Enumeration e=myfileprops.propertyNames(); e.hasMoreElements(); )
 				{
 				   String prop=(String)e.nextElement();
-				   
+                    if (prop.equals("paretoduration")) {
+                        paretoduration = Integer.parseInt(myfileprops.getProperty(prop).trim());
+                        System.err.println("paretoduration");
+                    }
+                    else if (prop.equals("sigma")) {
+                        String value = myfileprops.getProperty(prop).replace("[", " ");
+                        value = value.replace("]", " ");
+                        String[] doubleString = value.split(",");
+                        sigma = new double[doubleString.length];
+                        for (int i = 0; i < doubleString.length; ++i) {
+                            double number = Double.parseDouble(doubleString[i].trim());
+                            sigma[i] = number;
+                        }
+                    }
+                    else if (prop.equals("kappa")) {
+                        String value = myfileprops.getProperty(prop).replace("[", " ");
+                        value = value.replace("]", " ");
+                        String[] doubleString = value.split(",");
+                        kappa = new double[doubleString.length];
+                        for (int i = 0; i < doubleString.length; ++i) {
+                            double number = Double.parseDouble(doubleString[i].trim());
+                            kappa[i] = number;
+                        }
+                    }
+                    else {
+
+                        fileprops.setProperty(prop, myfileprops.getProperty(prop));
+                    }
 				   fileprops.setProperty(prop,myfileprops.getProperty(prop));
 				}
 
