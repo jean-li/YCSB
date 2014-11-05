@@ -6,7 +6,7 @@
     <artifactId>root</artifactId>
     <version>0.1.4</version>
   </parent>
-  
+
   <artifactId>mapkeeper-binding</artifactId>
   <name>Mapkeeper DB Binding</name>
   <packaging>jar</packaging>
@@ -23,7 +23,7 @@
        <version>${project.version}</version>
      </dependency>
   </dependencies>
-  
+
   <build>
     <plugins>
      <plugin>
@@ -53,6 +53,6 @@
       <id>mapkeeper-releases</id>
       <url>https://raw.github.com/m1ch1/m1ch1-mvn-repo/master/releases</url>
     </repository>
-  </repositories>	
+  </repositories>
 
 </project>
