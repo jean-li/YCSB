@@ -156,9 +156,11 @@ class ClientThread extends Thread
 	int _threadcount;
 	Object _workloadstate;
 	Properties _props;
+    int _paretoduration;
+    double[] _sigma;
+    double[] _kappa;
 
-
-	/**
+    /**
 	 * Constructor.
 	 * 
 	 * @param db the DB implementation to use
@@ -182,10 +184,39 @@ class ClientThread extends Thread
 		_threadid=threadid;
 		_threadcount=threadcount;
 		_props=props;
+
 		//System.out.println("Interval = "+interval);
+        _paretoduration = 0;
+        _sigma = null;
+        _kappa = null;
 	}
 
-	public int getOpsDone()
+    /**
+     * Constructor
+     * @param paretoduration the duration of eahc generalized pareto distribution
+     * @param sigma
+     * @param kappa
+     */
+    public ClientThread(DB db, boolean dotransactions, Workload workload, int threadid, int threadcount, Properties props, int opcount, double targetperthreadperms, int paretoduration, double[] sigma, double[] kappa)
+    {
+        //TODO: consider removing threadcount and threadid
+        _db=db;
+        _dotransactions=dotransactions;
+        _workload=workload;
+        _opcount=opcount;
+        _opsdone=0;
+        _target=targetperthreadperms;
+        _threadid=threadid;
+        _threadcount=threadcount;
+        _props=props;
+        //System.out.println("Interval = "+interval);
+        _paretoduration = paretoduration;
+        _sigma = sigma;
+        _kappa = kappa;
+    }
+
+
+    public int getOpsDone()
 	{
 		return _opsdone;
 	}
@@ -756,7 +787,13 @@ public class Client
 				System.exit(0);
 			}
 
-			Thread t=new ClientThread(db,dotransactions,workload,threadid,threadcount,props,opcount/threadcount,targetperthreadperms);
+            Thread t = null;
+            if (paretoduration != 0||sigma != null||kappa != null){
+                t = new ClientThread(db, dotransactions, workload, threadid, threadcount, props, opcount / threadcount, targetperthreadperms, paretoduration, sigma, kappa);
+            }
+            else {
+                t = new ClientThread(db, dotransactions, workload, threadid, threadcount, props, opcount / threadcount, targetperthreadperms);
+            }
 
 			threads.add(t);
 			//t.start();
