@@ -304,7 +304,32 @@ class ClientThread extends Thread
 							}
 
 						}
-					}
+					}else if (_paretoduration != 0 || _sigma != null || _kappa != null) {
+                        if (System.currentTimeMillis() - durationst > _paretoduration * 1000) {
+                            durationst = System.currentTimeMillis();
+                            durationdone++;
+                            if (durationdone == _sigma.length) {
+                                durationdone = 0;
+                            }
+                            sigma = _sigma[durationdone];
+                            kappa = _kappa[durationdone];
+                            g = new GeneralizedParetoDistribution(0, sigma, kappa, engine);
+                        }
+                        long nextrandom = ((long) g.nextRandom()) * 1000;
+                        if (_opsdone == 100) {
+                            System.err.print("nextrandom: " + nextrandom);
+                            System.err.print("CDF: " + g.getCDF((double) nextrandom));
+                            System.err.print("sigma: " + g.getSigma());
+                            System.err.print("kappa: " + g.getKsi());
+                        }
+                        intervalst = System.nanoTime();
+                        while (System.nanoTime() - intervalst < nextrandom) {
+                            //wait for the next transaction
+                        }
+                        long slept = System.nanoTime() - intervalst;
+                        long error = (slept - nextrandom) ^ 2;
+                        System.err.print("error: "+error);
+                    }
 				}
 			}
 			else
